@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Music Player</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1 class="logo">🎵 MeloRhythm</h1>
+    <p class="tagline">Feel the Music, Live the Rhythm</p>
+    <div id="songCounter">
+    🎵 Total Songs: {{songs|length}}
+    </div>
+    
+    <div id="nowPlaying" onclick="openPlayer()">
+        Now Playing:
+        No Song Selected 
+    </div>
+    <div class="favContainer">
+        <button onclick="toggleFavorites()">
+        ❤️ Favorites
+        </button>
+    </div>
+    
+    <div id="favoritesSection" style="display:none;">
+        <h3 id="favoriteCounter">
+        ❤️ Favorites: 0
+        </h3>
+    
+
+        <ul id="favoriteList"></ul>
+
+    </div>
+
+    <input
+        type="text"
+        id="search"
+        placeholder="Search Songs">
+    <div id="playlistSection">
+
+    <h3>📂 Playlists</h3>
+
+    <button onclick="createPlaylist()">
+    ➕ New Playlist
+    </button>
+    <button
+id="playlistBack"
+onclick="showAllSongs()"
+style="display:none;">
+⬅ Back
+</button>
+<ul id="playlistList"></ul>
+
+</div>
+    <ul id="songList">
+
+        {% for song in songs %}
+
+        <li onclick="playSong('{{song}}')">
+
+        <img src="/static/images/{{song.rsplit('.', 1)[0]}}.jpg"
+        class="cover"
+        onerror="this.src='static/images/default.jpg'">
+
+        <span>{{song.rsplit('.', 1)[0]}}</span>
+        <button 
+        class="favBtn"
+        data-song="{{song}}"
+        onclick="toggleFavorite(event,'{{song}}')">
+        🤍
+        </button>
+ 
+        <button
+        onclick="addToPlaylist(event,'{{song}}')">
+        📂
+        </button>
+    
+        </li>
+
+        {% endfor %}
+
+    </ul>
+
+    <audio id="audioPlayer"></audio>
+
+    <div class="progress-container">
+    <h3>🕒 Recently Played</h3>
+
+    <ul id="recentList">
+
+    </ul>
+    <input 
+        type="range"
+        id="progress"
+        value="0"
+        min="0"
+        max="100">
+
+    <div id="timeDisplay">
+    0:00 / 0:00
+    </div>
+
+</div>
+    <div class="volumeBox">
+
+    🔉
+
+    <input
+    type="range"
+    id="volume"
+    min="0"
+    max="100"
+    value="100">
+
+    🔊
+
+    </div>
+    <div class="controls">
+
+        <button onclick="previousSong()">
+            ⏮
+        </button>
+
+        <button onclick="togglePlay()">
+            ▶ / ⏸
+        </button>
+
+        <button onclick="nextSong()">
+            ⏭
+        </button>
+        <div id="queueSection">
+        <h3>⏭ Up Next</h3>
+        <ul id="queueList"></ul>
+        </div>
+    </div>
+
+    <div class="controls">
+
+        <button onclick="shuffleSongs()">
+            🔀 Shuffle
+        </button>
+
+        <button onclick="toggleRepeat()">
+            🔁 Repeat
+        </button>
+
+    </div>
+
+    <button onclick="toggleDarkMode()">
+        🌙 Dark Mode
+    </button>
+
+</div>
+
+
+<div id="playerOverlay">
+        <button id="backBtn"
+            onclick="closePlayer()">
+            ← Back
+        </button>
+
+    <h2 id="overlayTitle">No Song Selected</h2>
+    <img
+    src="/static/images/default.jpg"
+    id="bigCover">
+    <div id="overlayControls">
+    <div id="visualizer">
+
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+
+    </div>
+<button onclick="previousSong()">
+⏮
+</button>
+
+<button onclick="togglePlay()">
+▶ / ⏸
+</button>
+
+<button onclick="nextSong()">
+⏭
+</button>
+
+</div>
+<div id="overlayProgressContainer">
+
+<input
+type="range"
+id="overlayProgress"
+value="0"
+min="0"
+max="100">
+
+<div id="overlayTime">
+0:00 / 0:00
+
+</div>
+    
+
+    
+    <h3>ℹ️ Song Details</h3>
+
+        <div id="songDetails">
+
+        <p><b>Title:</b> <span id="detailTitle">-</span></p>
+
+        <p><b>Artist:</b> <span id="detailArtist">-</span></p>
+
+        <p><b>Genre:</b> <span id="detailGenre">-</span></p>
+
+        <p><b>Year:</b> <span id="detailYear">-</span></p>
+
+        <p><b>Album:</b> <span id="detailAlbum">-</span></p>
+        </div>
+    
+
+</div>
+</div>
+<script src="{{ url_for('static',
+filename='js/script.js') }}"></script>
+<div id="toast"></div>
+<div id="miniPlayer" onclick="openPlayer()">
+
+<span id="miniSong">No Song Playing</span>
+
+<div class="miniControls">
+<button onclick="event.stopPropagation(); previousSong()">⏮</button>
+<button onclick="event.stopPropagation(); togglePlay()">▶</button>
+<button onclick="event.stopPropagation(); nextSong()">⏭</button>
+</div>
+
+</div>
+</body>
+</html>
